@@ -1,0 +1,44 @@
+/* .body{
+    background-image: ;
+} */
+
+
+.title{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
+    margin-top: 700px;
+    
+}
+
+.Login{
+    background-color: #0000FF;
+    border-radius: 20px;
+    width: 15rem;
+    margin: 5px;
+}
+
+.Login p{
+    display: flex;
+    justify-content: center;
+    color: white;
+}
+
+.Cadastrar{
+    background-color: #0000FF;
+    border-radius: 20px;
+    width: 15rem;
+}
+
+.Cadastrar p{
+    display: flex;
+    justify-content: center;
+    color: white;
+}

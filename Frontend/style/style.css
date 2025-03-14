@@ -1,6 +1,7 @@
-/* .body{
-    background-image: ;
-} */
+body{
+background-image: url("../assest/iPhone\ 13\ &\ 14\ -\ 1\ \(2\).png");
+background-repeat: no-repeat;
+}
 
 
 .title{
@@ -14,7 +15,7 @@
     align-items: center;
     justify-content: flex-end;
     flex-direction: column;
-    margin-top: 700px;
+    margin-top: 600px;
     
 }
 
@@ -41,4 +42,52 @@
     display: flex;
     justify-content: center;
     color: white;
+}
+
+
+.Container2{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 150px;
+    
+}
+
+.box{
+    background-color: #0000FF;
+    width: 15rem;
+    height: 15rem;
+    border-radius: 1rem;
+}
+
+.box p{
+    margin: 2rem 0 2rem 35px;
+    color: white;
+    font-size: 20px;
+}
+ 
+
+.jogar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0000FF;
+    border-radius: 20px;
+    width: 15rem;
+    margin: 35px;
+    height: 3.5rem ;    
+}
+
+.jogar p{
+    display: flex;
+    justify-content: center;
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.buttonGame{
+    display: flex;
+    justify-content: center;
 }

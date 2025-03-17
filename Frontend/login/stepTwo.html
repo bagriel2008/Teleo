@@ -15,30 +15,30 @@
                 <h1>TELEODECISON</h1>
             </div>
         </header>
-        <main>
+
+        <form id="loginForm" method="get">
+
             <section class="Container2">
                 <div class="box">
-                    <div class="name">
-                        <p>Nome:</p>
-                    </div>
                     <div class="email">
-                        <p>Email:</p>
+                        <label for="email">Email</label>
+                        <input type="text" id="email" name="email" required>
                     </div>
                     <div class="password">
-                        <p>Senha:</p>
+                        <label for="password">Senha</label>
+                        <input type="text" id="password" name="password" required>
                     </div>
                 </div>
             </section>
             <div class="buttonGame">
-                <button disabled class="jogar">
-                    <p>
-                        Jogar
-                    </p>
-
-                </button>
+                <button type="submit" class="jogar">Jogar</button>
             </div>
-        </main>
+
+        </form>
+
     </main>
 </body>
+<script src="../style/scriptLogin.js"></script>
+
 
 </html>

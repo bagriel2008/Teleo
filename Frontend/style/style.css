@@ -1,74 +1,92 @@
-body{
-background-image: url("../assest/iPhone\ 13\ &\ 14\ -\ 1\ \(2\).png");
-background-repeat: no-repeat;
+@media (max-width: 768px){
+    body {
+    background-image: url("../assest/iPhone\ 13\ &\ 14\ -\ 1\ \(2\).png");
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 828px;
+}
+}
+
+@media (min-width: 769px) {
+    body {
+        background-image: url("../assest/2603550423-escolhas.png"); /* Outra imagem para PC */
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover; /* Para preencher toda a tela */
+        height: 828px;
+
+    }
 }
 
 
-.title{
+
+.title {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.Container{
+.Container {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     flex-direction: column;
     margin-top: 600px;
-    
+
 }
 
-.Login{
+.Login {
     background-color: #0000FF;
     border-radius: 20px;
     width: 15rem;
     margin: 5px;
 }
 
-.Login p{
+.Login p {
     display: flex;
     justify-content: center;
     color: white;
 }
 
-.Cadastrar{
+.Cadastrar {
     background-color: #0000FF;
     border-radius: 20px;
     width: 15rem;
 }
 
-.Cadastrar p{
+.Cadastrar p {
     display: flex;
     justify-content: center;
     color: white;
 }
 
 
-.Container2{
+.Container2 {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     margin-top: 150px;
-    
+
 }
 
-.box{
+.box {
     background-color: #0000FF;
-    width: 15rem;
+    width: 17rem;
     height: 15rem;
     border-radius: 1rem;
+    margin: 10px;
 }
 
-.box p{
-    margin: 2rem 0 2rem 35px;
+.box label {
+    margin: 1rem;
     color: white;
     font-size: 20px;
 }
- 
 
-.jogar{
+
+
+.jogar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -76,10 +94,10 @@ background-repeat: no-repeat;
     border-radius: 20px;
     width: 15rem;
     margin: 35px;
-    height: 3.5rem ;    
+    height: 3.5rem;
 }
 
-.jogar p{
+.buttonGame button {
     display: flex;
     justify-content: center;
     color: white;
@@ -87,7 +105,7 @@ background-repeat: no-repeat;
     font-weight: bold;
 }
 
-.buttonGame{
+.buttonGame {
     display: flex;
     justify-content: center;
 }

@@ -5,7 +5,7 @@
 O projeto TELEODECISON tem como objetivo criar uma plataforma interativa onde os usuários possam se cadastrar, fazer login e participar de uma experiência baseada em decisões, promovendo engajamento e interatividade.
 
 ## Tecnologias Usadas:
-
+```
 Front-end: HTML, CSS, JavaScript
 
 Back-end: Node.js com Express.js
@@ -13,6 +13,7 @@ Back-end: Node.js com Express.js
 Banco de Dados: MySQL
 
 Outras Tecnologias: Fetch API, CORS
+```
 
 #Funcionalidades Implementadas
 

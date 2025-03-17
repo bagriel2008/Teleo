@@ -1,10 +1,10 @@
-#TELEODECISON
+# TELEODECISON
 
-##Objetivo
+## Objetivo
 
 O projeto TELEODECISON tem como objetivo criar uma plataforma interativa onde os usuários possam se cadastrar, fazer login e participar de uma experiência baseada em decisões, promovendo engajamento e interatividade.
 
-##Tecnologias Usadas:
+## Tecnologias Usadas:
 
 Front-end: HTML, CSS, JavaScript
 

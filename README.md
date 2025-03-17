@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-O projeto TELEODECISON tem como objetivo, criar uma plataforma interativa, onde o RH das empresas poderão usar para o auxilio de contratações para determinadas funções dentro das empresas em geral.
+O projeto TELEODECISON tem como objetivo, criar uma plataforma interativa onde, o RH das empresas poderão usar para o auxilio de contratações para determinadas funções dentro das empresas em geral.
 
 ## Tecnologias Usadas:
 

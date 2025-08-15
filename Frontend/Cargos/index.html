@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/cargos.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <header>
+        <h1>Adicionar Novo Cargo</h1>
+    </header>
+
+    <main>
+        <form id="formCargo" autocomplete="off">
+            <label for="cargoNome">Nome do Cargo:</label>
+            <input type="text" id="cargoNome" name="cargoNome" required placeholder="Ex: Analista de RH">
+
+            <label for="qtdQuestoes">Quantidade de Questões:</label>
+            <input type="number" id="qtdQuestoes" min="1" max="50" required>
+
+            <button type="button" id="btnGerar">Gerar Questões</button>
+
+            <div id="camposPerguntas"></div>
+
+            <button type="submit" id="btnSalvar">Salvar Cargo</button>
+        </form>
+    </main>
+</body>
+<script src="../style/adicionarCargos.js"></script>
+</html>

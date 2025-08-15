@@ -9,7 +9,7 @@ form.addEventListener('submit', async(e)=> {
 
     const response = await fetch('http://localhost:3030/cadastro', {   
         method:'POST',
-        headers:{'Content-Type': ' application/json'},
+        headers:{'Content-Type': 'application/json'},
         body: JSON.stringify({username, password, email})
     })
     console.log(response);

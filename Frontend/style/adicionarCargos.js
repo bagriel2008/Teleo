@@ -83,17 +83,3 @@ byId('formCargo').addEventListener('submit', async (e) => {
   }
 });
 
-
-// Função para carregar os cargos do usuário na página de perfil
-// async function carregarCargos() {
-//     const response = await fetch('http://localhost:3030/cargos');
-//     const cargos = await response.json();
-//     const cargosList = document.getElementById('cargosList');
-
-//     cargosList.innerHTML = '';
-//     cargos.forEach(cargo => {
-//         const li = document.createElement('li');
-//         li.textContent = cargo.nome;
-//         cargosList.appendChild(li);
-//     });
-// }

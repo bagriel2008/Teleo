@@ -1,25 +1,29 @@
-const form = document.getElementById('CadastrarForm')
+const form = document.getElementById('CadastrarForm');
 
-form.addEventListener('submit', async(e)=> {
-    e.preventDefault()
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    const username = document.getElementById('username').value
-    const password = document.getElementById('password').value
-    const email = document.getElementById('email').value
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-    const response = await fetch('http://localhost:3030/cadastro', {   
-        method:'POST',
-        headers:{'Content-Type': 'application/json'},
-        body: JSON.stringify({username, password, email})
-    })
-    console.log(response);
-    const results = await response.json()
+    try {
+        const response = await fetch('http://localhost:3030/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
+        });
 
-    if (results.success) {
-        alert('cadastro bem sucedido')
-        window.location.href='../login/stepTwo.html'
-    } else {
-        alert('Falta alguma informação')
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Cadastro realizado com sucesso!");
+            window.location.href = "../login/stepTwo.html"; // Redireciona para a página de login
+        } else {
+            alert("Erro ao cadastrar: " + result.message);
+        }
+    } catch (error) {
+        console.error('Erro ao fazer cadastro:', error);
+        alert("Erro ao conectar ao servidor!");
     }
-
-})
+});

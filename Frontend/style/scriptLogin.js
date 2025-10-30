@@ -14,11 +14,17 @@ form.addEventListener('submit', async (e) => {
         });
 
         const result = await response.json();
+        console.log("Resposta do servidor:", result);
 
         if (result.success) {
             alert("Login bem-sucedido!");
-            localStorage.setItem('token', result.token); // Armazena o token no localStorage
-            window.location.href = "../PaginaInicial/index.html"; // Redireciona para a página principal
+            localStorage.setItem('token', result.token);
+            localStorage.setItem('userTipo', result.tipo);
+
+            if (result.tipo === 'empresa' || result.tipo === 'usuario') {
+                window.location.href = "../PaginaInicial/index.html";
+            }
+            
         } else {
             alert("Usuário ou senha incorretos!");
         }

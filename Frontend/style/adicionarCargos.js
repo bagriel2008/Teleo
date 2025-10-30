@@ -1,110 +1,138 @@
-//fazer com que um usuario em especifico consiga adicionar seus cargos da sua empresa na pagina inicial
-//e que esses usuarios sejam salvos no banco de dados
-//e que esses cargos sejam exibidos na pagina de perfil do usuario
-
 const el = (sel) => document.querySelector(sel);
 const byId = (id) => document.getElementById(id);
 
-// Função para gerar perguntas (mantida do código original)
-byId('btnGerar').addEventListener('click', () => {
-  const qtd = parseInt(byId('qtdQuestoes').value, 10);
+// Verifica login e tipo
+function verificarAcessoEmpresa() {
+  const token = localStorage.getItem('token');
+  const tipo = localStorage.getItem('userTipo');
+
+  if (!token || tipo !== 'empresa') {
+    alert('Acesso restrito: apenas empresas podem adicionar cargos.');
+    window.location.href = "../PaginaInicial/index.html";
+    return false;
+  }
+
+  return token;
+}
+
+// Função principal para página de adicionar cargos
+window.addEventListener('DOMContentLoaded', () => {
+  const token = verificarAcessoEmpresa();
+  if (!token) return; // sem token, para execução
+
+  // Referências de elementos
+  const btnGerar = byId('btnGerar');
+  const btnSalvar = byId('btnSalvar');
+  const qtdQuestoesInput = byId('qtdQuestoes');
   const wrap = byId('camposPerguntas');
-  if (!qtd || qtd < 1) {
-    alert('Informe a quantidade de questões (mínimo 1).');
-    return;
-  }
+  const inputCargoNome = byId('cargoNome');
 
-  wrap.innerHTML = ''; // limpa
+  if (!btnGerar) console.warn('btnGerar não encontrado — verifique o id no HTML.');
+  if (!btnSalvar) console.warn('btnSalvar não encontrado — verifique o id no HTML.');
+  if (!qtdQuestoesInput) console.warn('qtdQuestoes não encontrado — verifique o id no HTML.');
+  if (!wrap) console.warn('camposPerguntas não encontrado — verifique o id no HTML.');
+  if (!inputCargoNome) console.warn('cargoNome não encontrado — verifique o id no HTML.');
 
-  for (let i = 1; i <= qtd; i++) {
-    const card = document.createElement('div');
-    card.className = 'pergunta-card';
-    card.innerHTML = `
-      <div class="pergunta-grid">
-        <label for="pergunta_${i}">Pergunta ${i}</label>
-        <input id="pergunta_${i}" placeholder="Digite a pergunta ${i}" required>
-      </div>
-      <div class="respostas-grid">
-        <div>
-          <label for="resposta_${i}_a">Resposta A</label>
-          <input id="resposta_${i}_a" placeholder="Resposta A" required>
-        </div>
-        <div>
-          <label for="resposta_${i}_b">Resposta B</label>
-          <input id="resposta_${i}_b" placeholder="Resposta B" required>
-        </div>
-        <div>
-          <label for="resposta_${i}_c">Resposta B</label>
-          <input id="resposta_${i}_c" placeholder="Resposta c" required>
-        </div>
-        <div>
-          <label for="resposta_${i}_d">Resposta B</label>
-          <input id="resposta_${i}_d" placeholder="Resposta d" required>
-        </div>
-      </div>
-    `;
-    wrap.appendChild(card);
-  }
-});
+  // Gerar perguntas dinamicamente
+  if (btnGerar) {
+    btnGerar.addEventListener('click', () => {
+      const qtd = parseInt(qtdQuestoesInput?.value || '0', 10);
 
-// Função para adicionar cargos
-byId('btnAdicionarCargo').addEventListener('click', () => {
-  const nomeCargo = byId('nomeCargo').value.trim();
-  const descricaoCargo = byId('descricaoCargo').value.trim();
+      if (!qtd || qtd < 1) {
+        alert('Informe a quantidade de questões (mínimo 1).');
+        return;
+      }
 
-  if (!nomeCargo || !descricaoCargo) {
-    alert('Por favor, preencha todos os campos.');
-    return;
-  }
+      wrap.innerHTML = ''; // limpa o container
 
-  // Simular envio para o backend
-  const cargo = { nome: nomeCargo, descricao: descricaoCargo };
-  salvarCargoNoBanco(cargo)
-    .then(() => {
-      alert('Cargo adicionado com sucesso!');
-      exibirCargosNaPagina();
-    })
-    .catch((err) => {
-      console.error('Erro ao salvar o cargo:', err);
-      alert('Erro ao salvar o cargo. Tente novamente.');
+      for (let i = 1; i <= qtd; i++) {
+        const card = document.createElement('div');
+        card.className = 'pergunta-card';
+        card.innerHTML = `
+          <div class="pergunta-grid">
+            <label for="pergunta_${i}">Pergunta ${i}</label>
+            <input id="pergunta_${i}" placeholder="Digite a pergunta ${i}" required>
+          </div>
+          <div class="respostas-grid">
+            ${['A', 'B', 'C', 'D']
+            .map(
+              (letra) => `
+                <div>
+                  <label for="resposta_${i}_${letra.toLowerCase()}">Resposta ${letra}</label>
+                  <input id="resposta_${i}_${letra.toLowerCase()}" placeholder="Resposta ${letra}" required>
+                </div>`
+            )
+            .join('')}
+          </div>
+        `;
+        wrap.appendChild(card);
+      }
     });
-
-  // Limpar os campos
-  byId('nomeCargo').value = '';
-  byId('descricaoCargo').value = '';
-});
-
-// Função para salvar o cargo no "banco de dados"
-async function salvarCargoNoBanco(cargo) {
-  // Simulação de envio para o backend
-  return fetch('/api/cargos', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(cargo),
-  });
-}
-
-// Função para exibir os cargos na página
-async function exibirCargosNaPagina() {
-  const listaCargos = byId('listaCargos');
-  listaCargos.innerHTML = 'Carregando...';
-
-  try {
-    const response = await fetch('/api/cargos');
-    const cargos = await response.json();
-
-    listaCargos.innerHTML = '';
-    cargos.forEach((cargo) => {
-      const item = document.createElement('div');
-      item.className = 'cargo-item';
-      item.innerHTML = `
-        <h3>${cargo.nome}</h3>
-        <p>${cargo.descricao}</p>
-      `;
-      listaCargos.appendChild(item);
-    });
-  } catch (err) {
-    console.error('Erro ao carregar os cargos:', err);
-    listaCargos.innerHTML = 'Erro ao carregar os cargos.';
   }
-}
+
+  // Salvar cargo no servidor
+  if (btnSalvar) {
+    btnSalvar.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      const nomeCargo = inputCargoNome?.value.trim() || '';
+      if (!nomeCargo) {
+        alert('Informe o nome do cargo.');
+        return;
+      }
+
+      const camposPerguntas = document.querySelectorAll('.pergunta-card');
+      if (!camposPerguntas.length) {
+        alert('Nenhuma pergunta gerada. Clique em "Gerar" primeiro.');
+        return;
+      }
+
+      const perguntas = [];
+      camposPerguntas.forEach((card, idx) => {
+        const pEl = byId(`pergunta_${idx + 1}`);
+        const p = pEl ? pEl.value.trim() : '';
+
+        const respostas = ['a', 'b', 'c', 'd'].map((letra) => {
+          const rEl = byId(`resposta_${idx + 1}_${letra}`);
+          return rEl ? rEl.value.trim() : '';
+        });
+
+        perguntas.push({ texto: p, respostas });
+      });
+
+      const cargoData = { nome: nomeCargo, perguntas };
+      
+      try {
+        const resp = await fetch('http://localhost:3030/cargos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(cargoData),
+        });
+
+        // Verifica se a resposta do servidor está ok
+        if (!resp.ok) {
+          const text = await resp.text();
+          throw new Error(`Erro do servidor: ${resp.status} - ${text}`);
+        }
+
+        const data = await resp.json();
+
+        if (data.success) {
+          alert('✅ Cargo adicionado com sucesso!');
+          inputCargoNome.value = '';
+          wrap.innerHTML = '';
+          qtdQuestoesInput.value = '';
+        } else {
+          alert('Erro ao adicionar cargo: ' + (data.message || 'desconhecido.'));
+        }
+      } catch (err) {
+        console.error('Erro ao enviar cargo:', err);
+        alert('Erro ao conectar ao servidor.');
+      }
+    });
+  }
+
+});

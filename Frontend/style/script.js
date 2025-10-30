@@ -76,12 +76,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 })();
 
 // Redirecionamento do ícone de perfil
-document.getElementById('perfilIcon')?.addEventListener('click', () => {
+document.getElementById('perfilIcon').addEventListener('click', () => {
     const tipo = localStorage.getItem('userTipo');
 
     if (tipo === 'empresa') {
-        window.location.href = '../Cargos/index.html';
+        window.location.href = "../Cargos/index.html";
     } else {
-        window.location.href = '../Perfil/index.html';
+        window.location.href = "../Perfil/index.html";
     }
 });

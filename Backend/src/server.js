@@ -6,6 +6,9 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const db = require('./db_config');
 const authRoutes = require('./auth');
+const cargoRoutes = require('./cargosAuth');
+
+
 
 const app = express();
 const server = http.createServer(app);
@@ -19,8 +22,8 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 app.use('/auth', authRoutes);
+app.use('/cargos', cargoRoutes);
 app.use(express.static('public')); // Serve os arquivos da pasta 'public'
-app.use('/api/auth', authRoutes);
 
 // Objeto para manter o controle dos usuários conectados: { username: socket.id }
 const connectedUsers = {};

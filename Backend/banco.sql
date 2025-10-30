@@ -43,3 +43,9 @@ CREATE TABLE IF NOT EXISTS perguntas (
   texto TEXT NOT NULL,
   FOREIGN KEY (cargo_id) REFERENCES cargos(id) ON DELETE CASCADE
 );
+
+UPDATE users 
+SET password = '$2b$10$V8./dAgXbv7d33fLmgpA8uX1bfTeq2AtwiKkdHAFGZ.ekPUfBzV6.' 
+WHERE id = 1;
+
+drop table users;

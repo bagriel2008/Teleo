@@ -15,8 +15,10 @@ VALUES ('empresa1','senha123','empresa@teste.com','empresa');
 
 CREATE TABLE cargos (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    creat_id INT NOT NULL,
     nome VARCHAR(255) NOT NULL
 );
+
 
 CREATE TABLE perguntas (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -48,4 +50,10 @@ UPDATE users
 SET password = '$2b$10$V8./dAgXbv7d33fLmgpA8uX1bfTeq2AtwiKkdHAFGZ.ekPUfBzV6.' 
 WHERE id = 1;
 
-drop table users;
+SELECT * FROM cargos;
+
+ALTER TABLE users
+ADD COLUMN profile_image VARCHAR(255) DEFAULT NULL,
+ADD COLUMN bio TEXT DEFAULT NULL;
+
+drop database Teleo;

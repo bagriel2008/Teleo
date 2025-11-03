@@ -71,68 +71,85 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // Salvar cargo no servidor
-  if (btnSalvar) {
-    btnSalvar.addEventListener('click', async (e) => {
-      e.preventDefault();
-
-      const nomeCargo = inputCargoNome?.value.trim() || '';
-      if (!nomeCargo) {
-        alert('Informe o nome do cargo.');
+  btnSalvar.addEventListener('click', async (e) => {
+    e.preventDefault();
+  
+    const nomeCargo = inputCargoNome?.value.trim() || '';
+    if (!nomeCargo) {
+      alert('Informe o nome do cargo.');
+      return;
+    }
+  
+    const camposPerguntas = document.querySelectorAll('.pergunta-card');
+    if (!camposPerguntas.length) {
+      alert('Nenhuma pergunta gerada. Clique em "Gerar" primeiro.');
+      return;
+    }
+  
+    if (camposPerguntas.length > 50) { // Limite de perguntas
+      alert('O número máximo de perguntas permitido é 50.');
+      return;
+    }
+  
+    const perguntas = [];
+    for (let idx = 0; idx < camposPerguntas.length; idx++) {
+      const pEl = byId(`pergunta_${idx + 1}`);
+      const p = pEl ? pEl.value.trim() : '';
+  
+      if (!p) {
+        alert(`A pergunta ${idx + 1} está vazia. Preencha todas as perguntas.`);
         return;
       }
-
-      const camposPerguntas = document.querySelectorAll('.pergunta-card');
-      if (!camposPerguntas.length) {
-        alert('Nenhuma pergunta gerada. Clique em "Gerar" primeiro.');
-        return;
-      }
-
-      const perguntas = [];
-      camposPerguntas.forEach((card, idx) => {
-        const pEl = byId(`pergunta_${idx + 1}`);
-        const p = pEl ? pEl.value.trim() : '';
-
-        const respostas = ['a', 'b', 'c', 'd'].map((letra) => {
-          const rEl = byId(`resposta_${idx + 1}_${letra}`);
-          return rEl ? rEl.value.trim() : '';
-        });
-
-        perguntas.push({ texto: p, respostas });
+  
+      const respostas = ['a', 'b', 'c', 'd'].map((letra) => {
+        const rEl = byId(`resposta_${idx + 1}_${letra}`);
+        return rEl ? rEl.value.trim() : '';
       });
-
-      const cargoData = { nome: nomeCargo, perguntas };
-      
-      try {
-        const resp = await fetch('http://localhost:3030/cargos', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(cargoData),
-        });
-
-        // Verifica se a resposta do servidor está ok
-        if (!resp.ok) {
-          const text = await resp.text();
-          throw new Error(`Erro do servidor: ${resp.status} - ${text}`);
-        }
-
-        const data = await resp.json();
-
-        if (data.success) {
-          alert('✅ Cargo adicionado com sucesso!');
-          inputCargoNome.value = '';
-          wrap.innerHTML = '';
-          qtdQuestoesInput.value = '';
-        } else {
-          alert('Erro ao adicionar cargo: ' + (data.message || 'desconhecido.'));
-        }
-      } catch (err) {
-        console.error('Erro ao enviar cargo:', err);
-        alert('Erro ao conectar ao servidor.');
+  
+      if (respostas.some((r) => !r)) {
+        alert(`Preencha todas as respostas da pergunta ${idx + 1}.`);
+        return;
       }
-    });
-  }
+  
+      perguntas.push({ texto: p, respostas });
+    }
+  
+    const cargoData = { nome: nomeCargo, perguntas };
+  
+    try {
+      console.log('Token enviado:', token); // Log para verificar o token
+      const resp = await fetch('http://localhost:3030/cargos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(cargoData),
+      });
+  
+      if (!resp.ok) {
+        const text = await resp.text();
+        if (resp.status === 403) {
+          alert('Erro de autorização: você não tem permissão para realizar esta ação.');
+        }
+        throw new Error(`Erro do servidor: ${resp.status} - ${text}`);
+      }
+  
+      const data = await resp.json();
+  
+      if (data.success) {
+        alert('✅ Cargo adicionado com sucesso!');
+        inputCargoNome.value = '';
+        wrap.innerHTML = '';
+        qtdQuestoesInput.value = '';
+        window.location.href = "../PaginaInicial/index.html";
+      } else {
+        alert('Erro ao adicionar cargo: ' + (data.message || 'desconhecido.'));
+      }
+    } catch (err) {
+      console.error('Erro ao enviar cargo:', err);
+      alert('Erro ao conectar ao servidor. Verifique se o servidor está rodando e a conexão com o banco de dados está correta.');
+    }
+  });
 
 });

@@ -1,15 +1,32 @@
 window.addEventListener('DOMContentLoaded', async () => {
     const container = document.querySelector('.modosDeJogo');
-    if (!container) return; // Se não for a página de lista, não executa
+    if (!container) return;
 
     container.innerHTML = '<p>Carregando cargos...</p>';
 
+    const token = localStorage.getItem('token');
+
     try {
-        const resp = await fetch('http://localhost:3030/cargos');
+        const resp = await fetch('http://localhost:3030/cargos', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (resp.status === 401) {
+            container.innerHTML = '<p>Você precisa estar logado para ver os cargos.</p>';
+            return;
+        }
+
+        if (!resp.ok) {
+            throw new Error(`Erro ${resp.status}: ${resp.statusText}`);
+        }
+
         const cargos = await resp.json();
 
         container.innerHTML = '';
-        if (!cargos.length) {
+        if (!Array.isArray(cargos) || cargos.length === 0) {
             container.innerHTML = '<p>Nenhum cargo cadastrado ainda.</p>';
             return;
         }
@@ -19,7 +36,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             a.href = `../modoDeJogo/index.html?id=${c.id}`;
             a.innerHTML = `
                 <div class="modo">
-                  <p>${c.nome}</p>
+                    <p>${c.nome}</p>
                 </div>
             `;
             container.appendChild(a);
@@ -34,11 +51,24 @@ window.addEventListener('DOMContentLoaded', async () => {
 (async function carregarCargo() {
     const qs = new URLSearchParams(window.location.search);
     const id = qs.get('id');
+    if (!id) return;
 
-    if (!id) return; // Só executa se tiver id na URL
+    const token = localStorage.getItem('token');
 
     try {
-        const resp = await fetch(`http://localhost:3030/cargos/${id}`);
+        const resp = await fetch(`http://localhost:3030/cargos/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Resposta da requisição:', resp);
+        if (resp.status === 401) {
+            alert('Você precisa estar logado para acessar este cargo.');
+            window.location.href = "../index.html";
+            return;
+        }
+
         if (!resp.ok) throw new Error('Erro na requisição');
 
         const data = await resp.json();
@@ -76,12 +106,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 })();
 
 // Redirecionamento do ícone de perfil
-document.getElementById('perfilIcon').addEventListener('click', () => {
-    const tipo = localStorage.getItem('userTipo');
-
-    if (tipo === 'empresa') {
-        window.location.href = "../Cargos/index.html";
-    } else {
-        window.location.href = "../Perfil/index.html";
-    }
-});
+const perfilIcon = document.getElementById('perfilIcon');
+if (perfilIcon) {
+    perfilIcon.addEventListener('click', () => {
+        const tipo = localStorage.getItem('userTipo');
+        if (tipo === 'empresa') {
+            window.location.href = "../Cargos/index.html";
+        } else {
+            window.location.href = "../Perfil/index.html";
+        }
+    });
+}

@@ -117,3 +117,79 @@ if (perfilIcon) {
         }
     });
 }
+
+window.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('token');
+    const userName = document.getElementById('userName');
+    const perfilImage = document.getElementById('perfilImage');
+    const bioUsuario = document.getElementById('bio');
+    const perfilForm = document.getElementById('perfilForm');
+    const profileImageInput = document.getElementById('profileImageInput');
+
+    if (!userName || !perfilImage || !bioUsuario || !perfilForm) return;
+
+    // Função para carregar perfil
+    async function carregarPerfil() {
+        try {
+            const resp = await fetch('http://localhost:3030/perfil', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!resp.ok) throw new Error(`Erro ${resp.status}`);
+
+            const data = await resp.json();
+
+            if (!data.success) throw new Error(data.message);
+
+            // Atualiza o DOM com os dados do usuário
+            userName.textContent = data.user.username;
+            perfilImage.src = data.user.profile_image ? `http://localhost:3030/uploads/${data.user.profile_image}` : '../assest/User.png';
+            bioUsuario.value = data.user.bio || '';
+
+        } catch (err) {
+            console.error('Erro ao carregar perfil:', err);
+            alert('Erro ao carregar perfil');
+        }
+    }
+
+    // Carregar dados ao abrir a página
+    carregarPerfil();
+
+    // Atualizar perfil ao enviar formulário
+    perfilForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+    
+        const formData = new FormData();
+        formData.append('bio', bioUsuario.value);
+    
+        if (profileImageInput.files[0]) {
+            formData.append('profileImage', profileImageInput.files[0]);
+        }
+    
+        try {
+            const resp = await fetch('http://localhost:3030/perfil', {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${token}` }, // apenas auth
+                body: formData
+            });
+    
+            // Verifica se a resposta é JSON
+            const text = await resp.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch {
+                console.error('Resposta do servidor não é JSON:', text);
+                throw new Error('Erro do servidor ao atualizar perfil');
+            }
+    
+            if (!data.success) throw new Error(data.message);
+    
+            alert('Perfil atualizado com sucesso!');
+            carregarPerfil(); // Atualiza nome, bio e imagem imediatamente
+        } catch (err) {
+            console.error('Erro ao atualizar perfil:', err);
+            alert('Erro ao atualizar perfil');
+        }
+    });
+});

@@ -100,4 +100,6 @@ router.post('/cargos', async (req, res) => {
   }
 });
 
+router.post
+
 module.exports = router;

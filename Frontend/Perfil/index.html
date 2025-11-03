@@ -4,44 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../style/styleModoDeJogo.css">
-    <title>Document</title>
+    <title>Perfil</title>
 </head>
 <body>
-    <header>
+    
+<main>
+    <section class="perfil-container">
         <div class="wards">
             <img src="../assest/Trophy.png" alt="">
         </div>
-    </header>
-    <main>
-        <section class="perfil-container">
-            <div class="perfil">
-                <img src="../assest/User.png" alt="">
-            </div>
-            <div class="perfil-info">
-                <h3>Nome do Usuário</h3>
-                <h3>Text about me:</h3>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam unde eius amet illum ipsam sed nulla dolorum saepe laborum iste pariatur non, sequi odio reprehenderit facilis? Dolores facilis vel voluptatibus?</p>
-    
-            </div>
-        </section>
-    </main>
-   <footer>
-        <section>
-            <div class="footer-content">
-                <div class="linha"></div>
-                <div class="funcoes">
-                    <div>
-                        <img src="../assest/bi_chat-dots-fill.png" alt="">
-                    </div>
-                    <div>
-                        <a href="../PaginaInicial/index.html"><img src="../assest/Vector.png" alt=""></a>
-                    </div>
-                    <div>
-                        <a href="../Perfil/index.html"><img src="../assest/User.png" alt=""></a>
-                    </div>
+        <div class="perfil">
+            <img id="perfilImage" src="../assest/User.png" alt="Imagem de perfil">
+        </div>
+        <div class="perfil-info">
+            <form id="perfilForm">
+                <label>Nome do Usuário:</label><br>
+                <span id="userName" style="font-weight: bold;"></span><br><br>
+
+                <label for="bio">Sobre mim:</label><br>
+                <textarea id="bio" name="bio" rows="4" cols="30"></textarea><br><br>
+
+                <label for="profileImageInput">Alterar imagem de perfil:</label><br>
+                <input type="file" id="profileImageInput" name="profileImage" accept="image/*"><br><br>
+
+                <button type="submit">Atualizar Perfil</button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <section>
+        <div class="footer-content">
+            <div class="linha"></div>
+            <div class="funcoes">
+                <div>
+                    <img src="../assest/bi_chat-dots-fill.png" alt="">
+                </div>
+                <div>
+                    <a href="../PaginaInicial/index.html"><img src="../assest/Vector.png" alt=""></a>
+                </div>
+                <div>
+                    <a href="../Perfil/index.html"><img src="../assest/User.png" alt=""></a>
                 </div>
             </div>
-        </section>
-    </footer>
+        </div>
+    </section>
+</footer>
+
+<script src="../style/script.js"></script>
 </body>
 </html>

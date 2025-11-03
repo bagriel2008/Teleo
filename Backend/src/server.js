@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const db = require('./db_config');
 const authRoutes = require('./auth');
 const cargoRoutes = require('./cargosAuth');
+const perfilRoutes = require('./perfilAuth');
 
 
 
@@ -23,6 +24,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/cargos', cargoRoutes);
+app.use('/perfil', perfilRoutes);
 app.use(express.static('public')); // Serve os arquivos da pasta 'public'
 
 // Objeto para manter o controle dos usuários conectados: { username: socket.id }

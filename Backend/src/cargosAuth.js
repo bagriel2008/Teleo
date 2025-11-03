@@ -62,30 +62,27 @@ router.post('/', autenticarToken, async (req, res) => {
 
 router.get('/:id', autenticarToken, async (req, res) => {
     const cargoId = req.params.id;
-    console.log('Requisição para cargo ID:', cargoId);
-    
+
     try {
-        const [cargoRows] = await db.execute('SELECT * FROM cargos WHERE id = ?', [cargoId]);
-        console.log('Resultado da consulta cargos:', cargoRows);
-        
-        if (cargoRows.length === 0) {
-            return res.status(404).json({ success: false, message: 'Cargo não encontrado.' });
-        }
-        
-        const cargo = cargoRows[0];
-        
-        const [perguntaRows] = await db.execute('SELECT * FROM perguntas WHERE cargo_id = ?', [cargoId]);
-        console.log('Perguntas do cargo:', perguntaRows);
-        
-        for (const pergunta of perguntaRows) {
-            const [respostaRows] = await db.execute('SELECT * FROM respostas WHERE pergunta_id = ?', [pergunta.id]);
-            pergunta.respostas = respostaRows.map(r => r.texto);
+        // Busca o cargo
+        const [cargos] = await db.execute('SELECT * FROM cargos WHERE id = ?', [cargoId]);
+        if (cargos.length === 0) return res.status(404).json({ success: false, message: 'Cargo não encontrado' });
+
+        const cargo = cargos[0];
+
+        // Busca as perguntas
+        const [perguntas] = await db.execute('SELECT * FROM perguntas WHERE cargo_id = ?', [cargoId]);
+
+        // Para cada pergunta, busca as respostas
+        for (let p of perguntas) {
+            const [respostas] = await db.execute('SELECT * FROM respostas WHERE pergunta_id = ?', [p.id]);
+            p.respostas = respostas; // adiciona respostas na pergunta
         }
 
-        res.json({ success: true, cargo: { ...cargo, perguntas: perguntaRows } });
+        res.json({ success: true, cargo, perguntas });
     } catch (err) {
         console.error('Erro ao buscar cargo:', err);
-        res.status(500).json({ success: false, message: 'Erro ao buscar cargo.' });
+        res.status(500).json({ success: false, message: 'Erro ao buscar cargo' });
     }
 });
 

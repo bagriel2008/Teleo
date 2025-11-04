@@ -125,71 +125,88 @@ window.addEventListener('DOMContentLoaded', async () => {
     const bioUsuario = document.getElementById('bio');
     const perfilForm = document.getElementById('perfilForm');
     const profileImageInput = document.getElementById('profileImageInput');
+    const removerImagemBtn = document.getElementById('removerImagem');
 
-    if (!userName || !perfilImage || !bioUsuario || !perfilForm) return;
+    const imagem_padrao = '../assets/User.png';
 
-    // Função para carregar perfil
-    async function carregarPerfil() {
-        try {
-            const resp = await fetch('http://localhost:3030/perfil', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (!resp.ok) throw new Error(`Erro ${resp.status}`);
-
-            const data = await resp.json();
-
-            if (!data.success) throw new Error(data.message);
-
-            // Atualiza o DOM com os dados do usuário
-            userName.textContent = data.user.username;
-            perfilImage.src = data.user.profile_image ? `http://localhost:3030/uploads/${data.user.profile_image}` : '../assest/User.png';
-            bioUsuario.value = data.user.bio || '';
-
-        } catch (err) {
-            console.error('Erro ao carregar perfil:', err);
-            alert('Erro ao carregar perfil');
+    if(userName && perfilImage && bioUsuario && perfilForm) {
+    
+        // Função para carregar dados do perfil
+        async function carregarPerfil() {
+            try {
+                const resp = await fetch('http://localhost:3030/perfil', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+    
+                const data = await resp.json();
+                if (!data.success) throw new Error(data.message);
+    
+                userName.textContent = data.user.username;
+                bioUsuario.value = data.user.bio || '';
+    
+                // ✅ Corrigido: se não houver imagem, usa a padrão SEMPRE
+                if (data.user.profile_image) {
+                    perfilImage.src = `http://localhost:3030${data.user.profile_image}`;
+                } else {
+                    perfilImage.src = imagem_padrao;
+                }
+    
+            } catch (err) {
+                console.error('Erro ao carregar perfil:', err);
+                alert('Erro ao carregar perfil');
+            }
         }
-    }
-
-    // Carregar dados ao abrir a página
-    carregarPerfil();
-
-    // Atualizar perfil ao enviar formulário
+    
+        
+        carregarPerfil();
+        
+        // Atualizar imagem e bio
     perfilForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-    
+
         const formData = new FormData();
         formData.append('bio', bioUsuario.value);
-    
         if (profileImageInput.files[0]) {
             formData.append('profileImage', profileImageInput.files[0]);
         }
-    
+
         try {
             const resp = await fetch('http://localhost:3030/perfil', {
                 method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token}` }, // apenas auth
+                headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
             });
-    
-            // Verifica se a resposta é JSON
-            const text = await resp.text();
-            let data;
-            try {
-                data = JSON.parse(text);
-            } catch {
-                console.error('Resposta do servidor não é JSON:', text);
-                throw new Error('Erro do servidor ao atualizar perfil');
-            }
-    
+            
+            const data = await resp.json();
             if (!data.success) throw new Error(data.message);
-    
+
             alert('Perfil atualizado com sucesso!');
-            carregarPerfil(); // Atualiza nome, bio e imagem imediatamente
+            carregarPerfil();
         } catch (err) {
             console.error('Erro ao atualizar perfil:', err);
             alert('Erro ao atualizar perfil');
         }
     });
+    
+    // Remover imagem de perfil → volta para a padrão
+    removerImagemBtn.addEventListener('click', async () => {
+        if (!confirm('Tem certeza que deseja remover sua imagem de perfil?')) return;
+
+        try {
+            const resp = await fetch('http://localhost:3030/perfil', {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const data = await resp.json();
+            if (!data.success) throw new Error(data.message);
+            alert('Imagem de perfil removida com sucesso!');
+            perfilImage.src = imagem_padrao; // volta à imagem padrão na tela
+
+        } catch (err) {
+            console.error('Erro ao remover imagem:', err);
+            alert('Erro ao remover imagem de perfil');
+        }
+    });
+}
 });

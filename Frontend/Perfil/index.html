@@ -1,57 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../style/styleModoDeJogo.css">
     <title>Perfil</title>
 </head>
+
 <body>
-    
-<main>
-    <section class="perfil-container">
-        <div class="wards">
-            <img src="../assest/Trophy.png" alt="">
-        </div>
-        <div class="perfil">
-            <img id="perfilImage" src="../assest/User.png" alt="Imagem de perfil">
-        </div>
-        <div class="perfil-info">
-            <form id="perfilForm">
-                <label>Nome do Usuário:</label><br>
-                <span id="userName" style="font-weight: bold;"></span><br><br>
 
-                <label for="bio">Sobre mim:</label><br>
-                <textarea id="bio" name="bio" rows="4" cols="30"></textarea><br><br>
+    <main>
+        <header>
+            <div class="wards">
+                <img src="../assets/Trophy.png" alt="">
+            </div>
+        </header>
+        <section class="perfil-container">
+            <div class="perfil">
+                <img id="perfilImage" src="../assets/User.png" alt="Imagem de perfil">
+            </div>
+            <div class="perfil-info">
+                <button type="button" id="removerImagem" class="remover-imagem-perfil">Remover imagem de
+                    perfil</button>
+                <form id="perfilForm">
+                    <br>
+                    <label>Nome do Usuário:</label><br>
+                    <span id="userName" style="font-weight: bold;"></span><br><br>
 
-                <label for="profileImageInput">Alterar imagem de perfil:</label><br>
-                <input type="file" id="profileImageInput" name="profileImage" accept="image/*"><br><br>
+                    <label for="bio">Sobre mim:</label><br>
+                    <textarea id="bio" name="bio" rows="4" cols="30"></textarea><br><br>
 
-                <button type="submit">Atualizar Perfil</button>
-            </form>
-        </div>
-    </section>
-</main>
+                    <label for="profileImageInput">Alterar imagem de perfil:</label><br>
+                    <input type="file" id="profileImageInput" name="profileImage" accept="image/*"><br><br>
 
-<footer>
-    <section>
-        <div class="footer-content">
-            <div class="linha"></div>
-            <div class="funcoes">
-                <div>
-                    <img src="../assest/bi_chat-dots-fill.png" alt="">
-                </div>
-                <div>
-                    <a href="../PaginaInicial/index.html"><img src="../assest/Vector.png" alt=""></a>
-                </div>
-                <div>
-                    <a href="../Perfil/index.html"><img src="../assest/User.png" alt=""></a>
+                    <button type="submit">Atualizar Perfil</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <section>
+            <div class="footer-content">
+                <div class="linha"></div>
+                <div class="funcoes">
+                    <div>
+                        <img src="../assets/bi_chat-dots-fill.png" alt="">
+                    </div>
+                    <div>
+                        <a href="../PaginaInicial/index.html"><img src="../assets/Vector.png" alt=""></a>
+                    </div>
+                    <div>
+                        <a href="../Perfil/index.html"><img src="../assets/User.png" alt=""></a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
-</footer>
+        </section>
+    </footer>
 
-<script src="../style/script.js"></script>
+    <script src="../style/script.js"></script>
 </body>
+
 </html>

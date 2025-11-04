@@ -1,6 +1,6 @@
 @media (max-width: 768px){
     body {
-    background-image: url("../assest/iPhone\ 13\ &\ 14\ -\ 1\ \(2\).png");
+    background-image: url("../assets/iPhone\ 13\ &\ 14\ -\ 1\ \(2\).png");
     background-repeat: no-repeat;
     background-position: center;
     height: 828px;
@@ -9,7 +9,7 @@
 
 @media (min-width: 769px) {
     body {
-        background-image: url("../assest/2603550423-escolhas.png"); /* Outra imagem para PC */
+        background-image: url("../assets/2603550423-escolhas.png"); /* Outra imagem para PC */
         background-repeat: no-repeat;
         background-position: center;
         background-size: cover; /* Para preencher toda a tela */

@@ -118,6 +118,7 @@ header {
     height: 3rem;
     border-radius: 50%;
     box-shadow: 0 0.2rem 0.6rem 0 black;
+    margin: 10px;
 }
 
 .wards img{
@@ -265,25 +266,25 @@ label {
     background-color: white;
     border-radius: 1rem;
     max-width: 800px;
-    box-shadow: 0 0.2rem 0.6rem rgba(0,0,0,0.2);
 }
 
 .perfil {
-    width: 120px;
-    height: 120px;
+    position: relative;
+    width: 7rem;
+    height: 7rem;
     border-radius: 50%;
+    overflow: hidden;
     box-shadow: 0 0.2rem 0.6rem 0 black;
-    flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
 }
 
 .perfil img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%;
 }
 
 .perfil-info {
@@ -331,10 +332,40 @@ label {
     transition: background-color 0.3s;
 }
 
+.remover-imagem-perfil button:hover {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(255, 0, 0, 0.8);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    display: none;
+}
+
+.remover-imagem-perfil {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+    width: fit-content;
+}
+
+.remover-imagem-perfil:hover {
+    background-color: #c82333;
+}
+
+/* Remove estilos incorretos do botão principal */
 #perfilForm button:hover {
     background-color: #0056b3;
 }
-
 /* ======= FOOTER ======= */
 
 

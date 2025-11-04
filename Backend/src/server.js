@@ -8,7 +8,8 @@ const db = require('./db_config');
 const authRoutes = require('./auth');
 const cargoRoutes = require('./cargosAuth');
 const perfilRoutes = require('./perfilAuth');
-
+const path = require('path');
+const fs = require('fs');
 
 
 const app = express();
@@ -22,6 +23,16 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
+
+//Garante que a pasta uploads existe
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
+//Servir a pasta 'uploads' publicamente
+app.use('/uploads', express.static(uploadDir));
+
 app.use('/auth', authRoutes);
 app.use('/cargos', cargoRoutes);
 app.use('/perfil', perfilRoutes);

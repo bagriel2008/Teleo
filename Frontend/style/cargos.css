@@ -1,7 +1,6 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background-color: #f4f4f4;
 }
 
 header {
@@ -17,7 +16,6 @@ main {
     background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 label {
@@ -60,4 +58,35 @@ button:hover {
 
 .pergunta label {
     margin-top: 0.5rem;
+}
+
+.lista-cargos {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cargo-item {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-radius: 10px;
+  align-items: center;
+}
+
+.excluir-btn {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  width: 40%;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 0;  
+}
+
+.excluir-btn:hover {
+  background-color: #c9302c;
 }

@@ -45,10 +45,10 @@ router.post('/', autenticarToken, async (req, res) => {
             );
             const perguntaId = perguntaResult.insertId;
 
-            for (const respostaTexto of pergunta.respostas) {
-                await db.execute(
-                    'INSERT INTO respostas (texto, pergunta_id) VALUES (?, ?)',
-                    [respostaTexto, perguntaId]
+            for (const resp of pergunta.respostas) {
+                await db.query(
+                    "INSERT INTO respostas (pergunta_id, texto, correta) VALUES (?, ?, ?)",
+                    [perguntaId, resp.texto, resp.correta]
                 );
             }
         }
@@ -94,6 +94,46 @@ router.get('/', autenticarToken, async (req, res) => {
         console.error('Erro ao buscar cargos:', err);
         res.status(500).json({ message: 'Erro ao buscar cargos.' });
     }
+});
+
+router.delete("/:id", autenticarToken, async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id;
+  const userTipo = req.user.tipo;
+
+  try {
+    if (userTipo !== "empresa") {
+      return res.status(403).json({ message: "Apenas empresas podem excluir cargos." });
+    }
+
+    // Verifica se o cargo pertence à empresa
+    const [cargo] = await db.execute("SELECT * FROM cargos WHERE id = ? AND creat_id = ?", [id, userId]);
+    if (cargo.length === 0) {
+      return res.status(404).json({ message: "Cargo não encontrado ou não pertence à empresa." });
+    }
+
+    // Busca todas as perguntas desse cargo
+    const [perguntas] = await db.execute("SELECT id FROM perguntas WHERE cargo_id = ?", [id]);
+
+    // Para cada pergunta, deleta primeiro as respostas dos usuários, depois as respostas padrão
+    for (const pergunta of perguntas) {
+      // Deleta as tentativas dos usuários para esta pergunta
+      await db.execute("DELETE FROM respostas_usuarios WHERE pergunta_id = ?", [pergunta.id]);
+      // Deleta as opções de resposta para esta pergunta
+      await db.execute("DELETE FROM respostas WHERE pergunta_id = ?", [pergunta.id]);
+    }
+
+    // Deleta as perguntas
+    await db.execute("DELETE FROM perguntas WHERE cargo_id = ?", [id]);
+
+    // Por fim, deleta o cargo
+    await db.execute("DELETE FROM cargos WHERE id = ?", [id]);
+
+    res.json({ message: "Cargo e todos os dados relacionados foram excluídos com sucesso." });
+  } catch (error) {
+    console.error("Erro ao excluir cargo:", error);
+    res.status(500).json({ message: "Erro interno ao excluir cargo.", error: error.message });
+  }
 });
 
 module.exports = router;

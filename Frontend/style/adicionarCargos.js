@@ -12,7 +12,7 @@ function verificarAcessoEmpresa() {
     return false;
   }
 
-  return token;
+  return token; 
 }
 
 // Função principal para página de adicionar cargos
@@ -54,12 +54,12 @@ window.addEventListener('DOMContentLoaded', () => {
             <input id="pergunta_${i}" placeholder="Digite a pergunta ${i}" required>
           </div>
           <div class="respostas-grid">
-            ${['A', 'B', 'C', 'D']
-            .map(
-              (letra) => `
-                <div>
+            ${['A', 'B', 'C', 'D'].map((letra, index) => `
+                <div clas="resposta-item">
                   <label for="resposta_${i}_${letra.toLowerCase()}">Resposta ${letra}</label>
                   <input id="resposta_${i}_${letra.toLowerCase()}" placeholder="Resposta ${letra}" required>
+                  <input type="radio" name="correta_${i}" value="${index}" class="correta">
+                  <span>Correta</span>
                 </div>`
             )
             .join('')}
@@ -73,51 +73,37 @@ window.addEventListener('DOMContentLoaded', () => {
   // Salvar cargo no servidor
   btnSalvar.addEventListener('click', async (e) => {
     e.preventDefault();
-  
-    const nomeCargo = inputCargoNome?.value.trim() || '';
-    if (!nomeCargo) {
-      alert('Informe o nome do cargo.');
-      return;
-    }
-  
+
+    const nomeCargo = inputCargoNome.value.trim();
+    if (!nomeCargo) return alert('Informe o nome do cargo.');
+
     const camposPerguntas = document.querySelectorAll('.pergunta-card');
-    if (!camposPerguntas.length) {
-      alert('Nenhuma pergunta gerada. Clique em "Gerar" primeiro.');
-      return;
-    }
-  
-    if (camposPerguntas.length > 50) { // Limite de perguntas
-      alert('O número máximo de perguntas permitido é 50.');
-      return;
-    }
-  
+    if (!camposPerguntas.length) return alert('Gere pelo menos uma pergunta.');
+
     const perguntas = [];
-    for (let idx = 0; idx < camposPerguntas.length; idx++) {
-      const pEl = byId(`pergunta_${idx + 1}`);
-      const p = pEl ? pEl.value.trim() : '';
-  
-      if (!p) {
-        alert(`A pergunta ${idx + 1} está vazia. Preencha todas as perguntas.`);
-        return;
-      }
-  
-      const respostas = ['a', 'b', 'c', 'd'].map((letra) => {
-        const rEl = byId(`resposta_${idx + 1}_${letra}`);
-        return rEl ? rEl.value.trim() : '';
+
+    for (let i = 0; i < camposPerguntas.length; i++) {
+      const pTexto = byId(`pergunta_${i + 1}`).value.trim();
+      if (!pTexto) return alert(`A pergunta ${i + 1} está vazia.`);
+
+      const respostas = ['a', 'b', 'c', 'd'].map((letra, idx) => {
+        const texto = byId(`resposta_${i + 1}_${letra}`).value.trim();
+        return { texto, correta: false };
       });
-  
-      if (respostas.some((r) => !r)) {
-        alert(`Preencha todas as respostas da pergunta ${idx + 1}.`);
-        return;
-      }
-  
-      perguntas.push({ texto: p, respostas });
+
+      // Verifica qual foi marcada como correta
+      const corretaRadio = document.querySelector(`input[name="correta_${i + 1}"]:checked`);
+      if (!corretaRadio) return alert(`Selecione a resposta correta da pergunta ${i + 1}.`);
+
+      const idxCorreta = parseInt(corretaRadio.value);
+      respostas[idxCorreta].correta = true;
+
+      perguntas.push({ texto: pTexto, respostas });
     }
-  
+
     const cargoData = { nome: nomeCargo, perguntas };
-  
+
     try {
-      console.log('Token enviado:', token); // Log para verificar o token
       const resp = await fetch('http://localhost:3030/cargos', {
         method: 'POST',
         headers: {
@@ -126,30 +112,79 @@ window.addEventListener('DOMContentLoaded', () => {
         },
         body: JSON.stringify(cargoData),
       });
-  
-      if (!resp.ok) {
-        const text = await resp.text();
-        if (resp.status === 403) {
-          alert('Erro de autorização: você não tem permissão para realizar esta ação.');
-        }
-        throw new Error(`Erro do servidor: ${resp.status} - ${text}`);
-      }
-  
+
       const data = await resp.json();
-  
-      if (data.success) {
-        alert('✅ Cargo adicionado com sucesso!');
+
+      if (resp.ok && data.success) {
+        alert('✅ Cargo e perguntas adicionados com sucesso!');
         inputCargoNome.value = '';
         wrap.innerHTML = '';
         qtdQuestoesInput.value = '';
         window.location.href = "../PaginaInicial/index.html";
       } else {
-        alert('Erro ao adicionar cargo: ' + (data.message || 'desconhecido.'));
+        alert(`Erro: ${data.message || 'Erro desconhecido.'}`);
       }
     } catch (err) {
       console.error('Erro ao enviar cargo:', err);
-      alert('Erro ao conectar ao servidor. Verifique se o servidor está rodando e a conexão com o banco de dados está correta.');
+      alert('Erro ao conectar ao servidor.');
     }
   });
-
 });
+
+async function carregarCargosDaEmpresa() {
+  const token = localStorage.getItem("token");
+  const tipo = localStorage.getItem("userTipo");
+
+  if (tipo !== "empresa") return;
+
+  try {
+    const response = await fetch("http://localhost:3030/cargos", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const cargos = await response.json();
+
+    const lista = document.getElementById("listaCargos");
+    lista.innerHTML = "";
+
+    cargos.forEach((cargo) => {
+      const item = document.createElement("div");
+      item.classList.add("cargo-item");
+      item.innerHTML = `
+        <span>${cargo.nome}</span>
+        <button class="excluir-btn" data-id="${cargo.id}">Excluir</button>
+      `;
+      lista.appendChild(item);
+    });
+
+    document.querySelectorAll(".excluir-btn").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        const id = e.target.getAttribute("data-id");
+        if (confirm("Tem certeza que deseja excluir este cargo?")) {
+          await excluirCargo(id);
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Erro ao carregar cargos:", error);
+  }
+}
+
+async function excluirCargo(id) {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await fetch(`http://localhost:3030/cargos/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = await response.json();
+    alert(data.message);
+    carregarCargosDaEmpresa();
+  } catch (error) {
+    console.error("Erro ao excluir cargo:", error);
+  }
+}
+
+// Carregar cargos ao abrir a página
+document.addEventListener("DOMContentLoaded", carregarCargosDaEmpresa);

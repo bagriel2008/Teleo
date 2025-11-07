@@ -8,6 +8,9 @@ const db = require('./db_config');
 const authRoutes = require('./auth');
 const cargoRoutes = require('./cargosAuth');
 const perfilRoutes = require('./perfilAuth');
+const respostasUsuarioRoutes = require('./respostasUsuarioAuth')
+const RewardsAuth = require('./RewardsAuth');
+
 const path = require('path');
 const fs = require('fs');
 
@@ -37,6 +40,8 @@ app.use('/auth', authRoutes);
 app.use('/cargos', cargoRoutes);
 app.use('/perfil', perfilRoutes);
 app.use(express.static('public')); // Serve os arquivos da pasta 'public'
+app.use('/respostas-usuario', respostasUsuarioRoutes);
+app.use('/estatisticas', RewardsAuth);
 
 // Objeto para manter o controle dos usuários conectados: { username: socket.id }
 const connectedUsers = {};

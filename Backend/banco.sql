@@ -34,6 +34,32 @@ CREATE TABLE respostas (
     FOREIGN KEY (pergunta_id) REFERENCES perguntas(id) ON DELETE CASCADE
 );
 
+CREATE TABLE respostas_usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    cargo_id INT NOT NULL,
+    pergunta_id INT NOT NULL,
+    resposta_id INT NOT NULL,
+    correta BOOLEAN DEFAULT FALSE,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (cargo_id) REFERENCES cargos(id),
+    FOREIGN KEY (pergunta_id) REFERENCES perguntas(id),
+    FOREIGN KEY (resposta_id) REFERENCES respostas(id)
+);
+
+CREATE TABLE IF NOT EXISTS respostas_usuario (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  cargo_id INT NOT NULL,
+  pergunta_id INT NOT NULL,
+  resposta_id VARCHAR(255) NOT NULL,
+  correta BOOLEAN NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (cargo_id) REFERENCES cargos(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS cargos (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(255) NOT NULL
@@ -50,10 +76,12 @@ UPDATE users
 SET password = '$2b$10$V8./dAgXbv7d33fLmgpA8uX1bfTeq2AtwiKkdHAFGZ.ekPUfBzV6.' 
 WHERE id = 1;
 
-SELECT * FROM cargos;
+SELECT * FROM respostas;
 
 ALTER TABLE users
 ADD COLUMN profile_image VARCHAR(255) DEFAULT NULL,
 ADD COLUMN bio TEXT DEFAULT NULL;
+
+ALTER TABLE respostas ADD COLUMN correta BOOLEAN DEFAULT FALSE;
 
 drop database Teleo;

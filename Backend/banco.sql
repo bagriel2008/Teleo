@@ -72,6 +72,16 @@ CREATE TABLE IF NOT EXISTS perguntas (
   FOREIGN KEY (cargo_id) REFERENCES cargos(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS mensagens (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  sender VARCHAR(255) NOT NULL,
+  recipient VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 UPDATE users 
 SET password = '$2b$10$V8./dAgXbv7d33fLmgpA8uX1bfTeq2AtwiKkdHAFGZ.ekPUfBzV6.' 
 WHERE id = 1;
@@ -84,4 +94,5 @@ ADD COLUMN bio TEXT DEFAULT NULL;
 
 ALTER TABLE respostas ADD COLUMN correta BOOLEAN DEFAULT FALSE;
 
+drop table messages;
 drop database Teleo;

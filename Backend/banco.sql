@@ -48,17 +48,6 @@ CREATE TABLE respostas_usuarios (
     FOREIGN KEY (resposta_id) REFERENCES respostas(id)
 );
 
-CREATE TABLE IF NOT EXISTS respostas_usuario (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  cargo_id INT NOT NULL,
-  pergunta_id INT NOT NULL,
-  resposta_id VARCHAR(255) NOT NULL,
-  correta BOOLEAN NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (cargo_id) REFERENCES cargos(id) ON DELETE CASCADE
-);
 
 CREATE TABLE IF NOT EXISTS cargos (
   id INT AUTO_INCREMENT PRIMARY KEY,

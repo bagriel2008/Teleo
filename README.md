@@ -1,64 +1,152 @@
-# TELEODECISON
+# TeleoDecision
 
-## Objetivo
+## Tema do Projeto
 
-O projeto TELEODECISON tem como objetivo, criar uma plataforma interativa onde, o RH das empresas poderão usá-la para o auxilio de contratações para determinadas funções dentro das empresas em geral.
+O TeleoDecision é uma plataforma interativa desenvolvida para auxiliar empresas e usuários na gestão de cargos, avaliações e comunicação profissional.
+O sistema permite que empresas criem cargos e perguntas avaliativas, enquanto usuários interagem através de um modo de jogo, respondendo questões e acompanhando seu desempenho.
+Além disso, o projeto inclui recursos de perfil, chat em tempo real e estatísticas de desempenho individual.
 
-## Tecnologias usadas:
+O objetivo principal é unir gamificação e recrutamento, permitindo que os candidatos aprendam mais sobre os cargos e demonstrem suas habilidades de forma dinâmica e divertida.
 
-+ Front-end: HTML, CSS, JavaScript
+## Tecnologias Utilizadas
+### Frontend
 
-+ Back-end: Node.js com Express.js
++ HTML5, CSS3 e JavaScript (ES6) 
 
-+ Banco de Dados: MySQL
++ Fetch API 
 
-+ Outras Tecnologias: Fetch API, CORS
++ Socket.io (cliente) 
 
+### Backend
 
-## Funcionalidades implementadas
++ Node.js com Express 
 
-### Cadastro de usuário:
++ MySQL 
 
-+ Os usuários podem criar uma conta informando nome, e-mail e senha.
++ JWT (JSON Web Token)
 
-+ Os dados são armazenados no banco de dados MySQL.
++ Bcrypt 
 
-### Login de usuário:
++ Socket.io (servidor) 
 
-+ Os usuários podem acessar suas contas usando e-mail e senha.
++ Multer 
 
-+ Validação de credenciais com resposta adequada caso os dados sejam incorretos.
++ CORS
 
-### Conexão com banco de dados:
+### Banco de Dados (MySQL)
 
-+ Utilização do MySQL para armazenar os dados dos usuários.
+Banco: Teleo
 
-+ Configuração de conexão via mysql2.
-
-### Servidor back-end:
-
-+ Implementação de rotas para cadastro e login utilizando Express.js.
-
-+ Comunicação com o banco de dados para inserção e verificação de credenciais.
-
-## Como executar o projeto
-
-### Instale as dependências:
+### Tabelas principais:
 ```
-npm install express mysql2 cors
+users (id, username, email, password, tipo, profile_image, bio)
+
+cargos (id, creat_id, nome)
+
+perguntas (id, cargo_id, texto)
+
+respostas (id, pergunta_id, texto, correta)
+
+mensagens (id, sender, recipient, message, created_at)
 ```
-### Configure o banco de dados MySQL:
 
-+ Crie um banco de dados chamado Teleo.
+## Estrutura Geral do Sistema
+### Principais Páginas
 
-+ Crie a tabela users com as colunas id, username, email, password.
+#### Login / Cadastro
 
-### Inicie o servidor:
++ Permite o acesso ao sistema.
+
++ Autenticação via JWT.
+
++ Após o login, o tipo de usuário define o acesso (empresa ou usuário comum).
+
+#### Adicionar Cargos (somente empresas)
+
++ Permite criar cargos, perguntas e respostas com definição da alternativa correta.
+
++ Todos os dados são salvos no banco de dados com o ID do criador.
+
+#### Modo de Jogo (usuário comum)
+
++ Exibe as perguntas dos cargos disponíveis.
+
++ Verifica automaticamente se a resposta está correta e avança.
+
++ Armazena o progresso e acertos no banco de dados.
+
+#### Perfil do Usuário
+
++ Exibe imagem, biografia e informações do usuário.
+
++ Permite editar a biografia e atualizar ou remover a imagem.
+
++ Mantém uma imagem padrão caso nenhuma seja enviada.
+
+#### Chat em Tempo Real
+
++ Mostra a lista de contatos (outros usuários da plataforma).
+
++ Permite trocar mensagens privadas em tempo real.
+
++ As mensagens são salvas no banco e recarregadas ao abrir o chat.
+
+#### Estatísticas
+
++ Mostra o desempenho do usuário com base nas respostas dadas.
+
++ Exibe percentual de acertos e progresso geral.
+
+## Manual de Uso
+### Acesso ao Sistema
+
+Inicie o servidor na pasta Backend:
 ```
-node server.js
+npm start
 ```
-### Abra o projeto no navegador:
 
-+ Acesse index.html para visualizar a interface.
+O sistema rodará por padrão em:
+```
+http://localhost:3030
+```
 
+### Usuário Administrador (Empresa)
 
+Use as credenciais abaixo para acessar o painel administrativo:
+```
+Email: empresa@teste.com
+Senha: senha123
+Tipo: empresa
+```
+
+### Funções disponíveis:
+
++ Criar novos cargos com perguntas e respostas.
+
++ Acompanhar desempenho de usuários.
+
++ Conversar com outros usuários via chat.
+
+### Usuário Comum
+
++ Após o cadastro, o usuário comum pode:
+
++ Entrar no modo de jogo.
+
++ Responder perguntas dos cargos disponíveis.
+
++ Visualizar seu progresso nas estatísticas.
+
++ Trocar mensagens com empresas e outros usuários.
+
+## Observações Técnicas
+
++ Uploads de imagem são armazenados automaticamente na pasta /uploads do projeto.
+
++ Caso não exista imagem de perfil, o sistema exibe uma imagem padrão (default.png).
+
++ As mensagens são armazenadas permanentemente no banco de dados, permitindo histórico.
+
++ O servidor está configurado para aceitar conexões CORS de qualquer origem.
+
++ Tokens JWT expiram automaticamente após determinado tempo de sessão.

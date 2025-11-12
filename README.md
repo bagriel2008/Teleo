@@ -11,27 +11,27 @@ O objetivo principal é unir gamificação e recrutamento, permitindo que os can
 ## Tecnologias Utilizadas
 ### Frontend
 
-+ HTML5, CSS3 e JavaScript (ES6) — para a estrutura, estilo e interatividade das páginas.
++ HTML5, CSS3 e JavaScript (ES6) 
 
-+ Fetch API — utilizada para comunicação com o backend via requisições HTTP.
++ Fetch API 
 
-+ Socket.io (cliente) — responsável pela comunicação em tempo real no chat entre usuários.
++ Socket.io (cliente) 
 
 ### Backend
 
-+ Node.js com Express — estrutura principal do servidor.
++ Node.js com Express 
 
-+ MySQL — banco de dados relacional usado para armazenar usuários, cargos, perguntas, respostas e mensagens.
++ MySQL 
 
-+ JWT (JSON Web Token) — autenticação segura de usuários.
++ JWT (JSON Web Token)
 
-+ Bcrypt — criptografia de senhas.
++ Bcrypt 
 
-+ Socket.io (servidor) — gerenciamento de conexões em tempo real.
++ Socket.io (servidor) 
 
-+ Multer — upload e armazenamento de imagens de perfil.
++ Multer 
 
-+ CORS — controle de acesso entre frontend e backend.
++ CORS
 
 ### Banco de Dados (MySQL)
 
@@ -114,7 +114,7 @@ http://localhost:3030
 
 Use as credenciais abaixo para acessar o painel administrativo:
 ```
-Email: empresa1@gmail.com
+Email: empresa@teste.com
 Senha: senha123
 Tipo: empresa
 ```
@@ -150,8 +150,3 @@ Tipo: empresa
 + O servidor está configurado para aceitar conexões CORS de qualquer origem.
 
 + Tokens JWT expiram automaticamente após determinado tempo de sessão.
-
-## Conclusão
-
-O TeleoDecision é um sistema completo que une gestão de cargos, avaliação gamificada e comunicação em tempo real, voltado à modernização do processo de recrutamento e desenvolvimento de habilidades.
-Com base em tecnologias web modernas, ele proporciona uma experiência dinâmica e integrada entre empresas e usuários, destacando o potencial da interação digital no contexto profissional.

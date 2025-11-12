@@ -1,27 +1,29 @@
 const token = localStorage.getItem('token');
-const username = localStorage.getItem('userEmail'); // usado para identificar quem está logado
+const username = localStorage.getItem('userEmail'); // quem está logado
 let contatoAtual = null;
 
-// Elementos do DOM
+// Elementos DOM
 const listaContatosEl = document.getElementById('listaContatos');
 const chatComEl = document.getElementById('chatCom');
+const chatPhotoEl = document.getElementById('chatPhoto');
 const messagesContainerEl = document.getElementById('messagesContainer');
 const chatFormEl = document.getElementById('chatForm');
-const mensagemInputEl = document.getElementById('messageInput'); // Corrigido para corresponder ao HTML
+const mensagemInputEl = document.getElementById('messageInput');
 const backToContactsBtn = document.getElementById('backToContacts');
-const chatPageContainer = document.querySelector('.chat-page-container');
 
+// Conexão com Socket.io
 const socket = io('http://localhost:3030');
 
-// Autentica o usuário no socket
+// Autenticação do socket
 socket.on('connect', () => {
-  socket.emit('authenticate', token);
+    socket.emit('authenticate', token);
 });
-// Busca lista de contatos (empresas)
+
+
 async function carregarContatos() {
     try {
         const response = await fetch('http://localhost:3030/perfil/chat', {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
 
@@ -31,15 +33,25 @@ async function carregarContatos() {
         }
 
         listaContatosEl.innerHTML = '';
-        data.contatos.forEach(contato => {
-            if (contato.email === username) return; // não exibe o próprio perfil
+
+        data.contatos.forEach((contato) => {
             const div = document.createElement('div');
             div.classList.add('contato');
-            div.innerHTML = `
-    <img src="http://localhost:3030/${contato.profile_image || 'uploads/default.png'}" alt="Foto">
-    <p>${contato.username}</p>
-  `;
+
+            const img = document.createElement('img');
+            img.src = contato.profile_image
+                ? `http://localhost:3030/${contato.profile_image}`
+                : `http://localhost:3030/uploads/default.png`;
+            img.alt = `Foto de ${contato.username}`;
+
+            const p = document.createElement('p');
+            p.textContent = contato.username;
+
+            div.appendChild(img);
+            div.appendChild(p);
+
             div.addEventListener('click', () => abrirChat(contato));
+
             listaContatosEl.appendChild(div);
         });
     } catch (error) {
@@ -48,49 +60,59 @@ async function carregarContatos() {
     }
 }
 
+
 function abrirChat(contato) {
     contatoAtual = contato;
     chatComEl.innerText = contato.username;
+    chatPhotoEl.src = contato.profile_image
+        ? `http://localhost:3030/${contato.profile_image}`
+        : `http://localhost:3030/uploads/default.png`;
     messagesContainerEl.innerHTML = '';
 
-    socket.emit('load-history', contato.id);
+    socket.emit('load-history', contato.email);
 
-    // Lógica para mobile
+    // Animação no mobile
     if (window.innerWidth <= 768) {
-        document.querySelector('.chat-page-container').classList.add('chat-active');
+        document
+            .querySelector('.chat-page-container')
+            .classList.add('chat-active');
     }
 }
 
-// Enviar mensagem
+
 chatFormEl.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const mensagem = mensagemInputEl.value.trim();
-  if (!mensagem || !contatoAtual) return;
+    e.preventDefault();
+    const mensagem = mensagemInputEl.value.trim();
+    if (!mensagem || !contatoAtual) return;
 
-  socket.emit('private-message', {
-    recipient: contatoAtual.email,
-    message: mensagem
-  });
+    socket.emit('private-message', {
+        recipient: contatoAtual.email,
+        message: mensagem,
+    });
 
-  // exibe imediatamente no chat local
-  exibirMensagem(username, mensagem, new Date());
-  mensagemInputEl.value = '';
+    mensagemInputEl.value = '';
 });
 
-// Receber mensagem
+
 socket.on('private-message', (data) => {
-    // Exibe a mensagem se for do contato atual ou se for a própria mensagem enviada
-    if (contatoAtual && (data.sender === contatoAtual.email || data.sender === username)) {
+    if (!contatoAtual) return;
+
+    const cond1 =
+        data.sender === contatoAtual.email && data.recipient === username; // recebida
+    const cond2 =
+        data.sender === username && data.recipient === contatoAtual.email; // enviada
+
+    if (cond1 || cond2) {
         exibirMensagem(data.sender, data.message, data.createdAt);
     }
 });
 
-// Receber histórico
+
 socket.on('history', (history) => {
     messagesContainerEl.innerHTML = '';
-    history.forEach(data => {
-        exibirMensagem(data.sender, data.message, data.createdAt);
-    });
+    history.forEach((msg) =>
+        exibirMensagem(msg.sender, msg.message, msg.createdAt)
+    );
 });
 
 function exibirMensagem(remetente, texto, timestamp) {
@@ -105,20 +127,19 @@ function exibirMensagem(remetente, texto, timestamp) {
 
     const span = document.createElement('span');
     span.classList.add('timestamp');
-    span.textContent = new Date(timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    span.textContent = new Date(timestamp).toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 
     div.appendChild(p);
     div.appendChild(span);
     messagesContainerEl.appendChild(div);
-
-    // Scroll para a última mensagem
     messagesContainerEl.scrollTop = messagesContainerEl.scrollHeight;
 }
 
-// Carrega contatos ao abrir a página
 document.addEventListener('DOMContentLoaded', carregarContatos);
 
-// Botão de voltar para mobile
 backToContactsBtn.addEventListener('click', () => {
     document.querySelector('.chat-page-container').classList.remove('chat-active');
     contatoAtual = null;

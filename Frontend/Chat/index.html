@@ -10,42 +10,48 @@
 </head>
 
 <body>
-    <main class="chat-page-container">
-        <!-- Coluna da Lista de Contatos -->
-        <aside id="contactsContainer" class="contacts-list-container">
-            <header class="contacts-header">
-                <h1>Conversas</h1>
-            </header>
-            <div class="contact-list">
-                <!-- Contatos serão carregados aqui -->
-                <div id="listaContatos"></div>
-            </div>
-        </aside>
+     <main class="chat-page-container">
+    <!-- Lista de Contatos -->
+    <aside id="contactsContainer" class="contacts-list-container">
+      <header class="contacts-header">
+        <h1>Conversas</h1>
+      </header>
+      <div id="listaContatos" class="contact-list">
+        <!-- Contatos aparecem aqui -->
+      </div>
+    </aside>
 
-        <!-- Coluna do Chat -->
-        <section id="chatContainer" class="chat-container">
-            <header class="chat-header">
-                <button id="backToContacts" class="back-button"><i class="fas fa-arrow-left"></i></button>
-                <img src="../assets/User.png" alt="Foto do Contato" class="contact-photo">
-                <span id="chatCom" class="contact-name">Selecione uma conversa</span>
-            </header>
-            <div id="messagesContainer" class="messages-container">
-                <!-- Mensagens da conversa selecionada -->
-                <div class="message received">
-                    <p>Olá! Como posso ajudar?</p>
-                    <span class="timestamp">10:00</span>
-                </div>
-                <div class="message sent">
-                    <p>Oi! Gostaria de saber mais sobre a vaga de Desenvolvedor.</p>
-                    <span class="timestamp">10:01</span>
-                </div>
-            </div>
-            <form id="chatForm" class="input-container">
-                <input type="text" id="messageInput" placeholder="Digite sua mensagem..." autocomplete="off" required>
-                <button type="submit" id="sendButton"><i class="fas fa-paper-plane"></i></button>
-            </form>
-        </section>
-    </main>
+    <!-- Área do Chat -->
+    <section id="chatContainer" class="chat-container">
+      <header class="chat-header">
+        <button id="backToContacts" class="back-button">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <img
+          id="chatPhoto"
+          src="../assets/User.png"
+          alt="Foto do Contato"
+          class="contact-photo"
+        />
+        <span id="chatCom" class="contact-name">Selecione uma conversa</span>
+      </header>
+
+      <div id="messagesContainer" class="messages-container"></div>
+
+      <form id="chatForm" class="input-container">
+        <input
+          type="text"
+          id="messageInput"
+          placeholder="Digite sua mensagem..."
+          autocomplete="off"
+          required
+        />
+        <button type="submit" id="sendButton">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </form>
+    </section>
+  </main>
 
     <footer>
         <section>
@@ -53,7 +59,7 @@
                 <div class="linha"></div>
                 <div class="funcoes">
                     <div>
-                        <img src="../assets/bi_chat-dots-fill.png" alt="">
+                        <a href="../Chat/index.html"><img src="../assets/bi_chat-dots-fill.png" alt=""></a>
                     </div>
                     <div>
                         <a href="../PaginaInicial/index.html"><img src="../assets/Vector.png" alt=""></a>
@@ -68,6 +74,7 @@
     <script src="http://localhost:3030/socket.io/socket.io.js"></script>
 
     <script src="../style/chat.js"></script>
+    <script src="../style/script.js"></script>
 </body>
 
 </html>

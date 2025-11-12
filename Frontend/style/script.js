@@ -346,6 +346,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 // Carregar estatísticas do usuário na página de Rewards
 document.addEventListener('DOMContentLoaded', async () => {
   const statsContainer = document.getElementById('statsContent');
+  if (!statsContainer) return; // <-- adiciona esta linha
+
   const token = localStorage.getItem('token');
 
   if (!token) {
@@ -367,19 +369,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Limpa o conteúdo anterior
     statsContainer.innerHTML = '';
 
-    // Cria cards de estatísticas
     data.stats.forEach(stat => {
       const card = document.createElement('div');
       card.classList.add('stat-card');
+
+      const percentual = stat.total_perguntas > 0
+        ? ((stat.acertos / stat.total_perguntas) * 100).toFixed(1)
+        : 0;
 
       card.innerHTML = `
         <h2>${stat.cargo_nome}</h2>
         <p>Total de Perguntas: <span class="score">${stat.total_perguntas}</span></p>
         <p>Acertos: <span class="score">${stat.acertos}</span></p>
-        <p>Desempenho: <span class="score">${stat.percentual}%</span></p>
+        <p>Desempenho: <span class="score">${percentual}%</span></p>
       `;
 
       statsContainer.appendChild(card);

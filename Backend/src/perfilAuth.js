@@ -44,6 +44,36 @@ const upload = multer({
     }
 });
 
+router.get('/chat', autenticarToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Busca o tipo do usuário logado
+    const [usuario] = await db.query('SELECT tipo FROM users WHERE id = ?', [userId]);
+    if (!usuario.length) {
+      return res.status(404).json({ success: false, message: 'Usuário não encontrado.' });
+    }
+
+    const tipoUsuario = usuario[0].tipo;
+
+    // Define o tipo oposto para listar nos contatos
+    const tipoParaBuscar = tipoUsuario === 'empresa' ? 'usuario' : 'empresa';
+
+    // Busca usuários do outro tipo
+    const [contatos] = await db.query(
+      'SELECT id, username, email, profile_image FROM users WHERE tipo = ?',
+      [tipoParaBuscar]
+    );
+
+    res.json({ success: true, contatos });
+  } catch (error) {
+    console.error('Erro ao carregar contatos do chat:', error);
+    res.status(500).json({ success: false, message: 'Erro ao carregar contatos.' });
+  }
+});
+
+
+
 // 🔹 GET — Pegar informações do usuário logado
 router.get('/', autenticarToken, async (req, res) => {
     try {

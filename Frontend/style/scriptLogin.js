@@ -19,6 +19,7 @@ form.addEventListener('submit', async (e) => {
         if (result.success) {
             alert("Login bem-sucedido!");
             localStorage.setItem('token', result.token);
+            localStorage.setItem('userEmail', email);
             localStorage.setItem('userTipo', result.tipo);
 
             if (result.tipo === 'empresa' || result.tipo === 'usuario') {

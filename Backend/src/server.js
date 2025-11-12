@@ -6,6 +6,8 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const db = require('./db_config');
 const authRoutes = require('./auth');
+
+
 const cargoRoutes = require('./cargosAuth');
 const perfilRoutes = require('./perfilAuth');
 const respostasUsuarioRoutes = require('./respostasUsuarioAuth')
@@ -16,12 +18,15 @@ const fs = require('fs');
 
 
 const app = express();
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
+
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: '*',
-        methods: ['GET', 'POST']
-    }
+  cors: {
+    origin: '*',
+  }
 });
 
 app.use(cors());
@@ -44,48 +49,108 @@ app.use('/respostas-usuario', respostasUsuarioRoutes);
 app.use('/estatisticas', RewardsAuth);
 
 // Objeto para manter o controle dos usuários conectados: { username: socket.id }
-const connectedUsers = {};
+const connectedUsers = new Map();
+
+app.get('/contatos', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      'SELECT id, username, email, profile_image FROM users WHERE tipo = "empresa"'
+    );
+
+    res.json({
+      success: true,
+      contatos: rows.map(u => ({
+        id: u.id,
+        username: u.username,
+        email: u.email,
+        profile_image: u.profile_image
+          ? `uploads/${u.profile_image}`
+          : 'uploads/default.png'
+      }))
+    });
+  } catch (err) {
+    console.error('Erro ao buscar contatos:', err);
+    res.status(500).json({ success: false, message: 'Erro no servidor' });
+  }
+});
+
 
 io.on('connection', (socket) => {
-    console.log('Novo usuário conectado:', socket.id);
+  console.log('📡 Novo socket conectado:', socket.id);
 
-    socket.on('authenticate', (token) => {
-        try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const username = decoded.email; // Usando email como identificador
+  // Recebe o token do cliente e autentica
+  socket.on('authenticate', (token) => {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'seusegredo');
+      socket.userEmail = decoded.email;
+      connectedUsers.set(socket.userEmail, socket.id);
+      console.log(`✅ ${socket.userEmail} autenticado`);
+    } catch (err) {
+      console.log('❌ Token inválido');
+      socket.disconnect();
+    }
+  });
 
-            connectedUsers[username] = socket.id;
-            console.log(`Usuário autenticado: ${username}`);
-        } catch (err) {
-            console.log('Token inválido:', err);
-            socket.disconnect();
-        }
-    });
+  // Recebe uma mensagem privada
+  socket.on('private-message', async (data) => {
+    const { recipient, message } = data;
+    const sender = socket.userEmail;
 
-    socket.on('send_message', (data) => {
-        const { to, message, from } = data;
-        const toSocketId = connectedUsers[to];
+    if (!sender || !recipient || !message) {
+      console.log('⚠️ Dados insuficientes para enviar mensagem');
+      return;
+    }
 
-        if (toSocketId) {
-            io.to(toSocketId).emit('receive_message', { from, message });
-            console.log(`Mensagem enviada de ${from} para ${to}: ${message}`);
-        } else {
-            console.log(`Usuário ${to} não está conectado.`);
-        }
-    });
+    const createdAt = new Date();
 
-    socket.on('disconnect', () => {
-        for (const [username, id] of Object.entries(connectedUsers)) {
-            if (id === socket.id) {
-                delete connectedUsers[username];
-                console.log(`Usuário desconectado: ${username}`);
-                break;
-            }
-        }
-    });
+    try {
+      // Salva no banco
+      await db.query(
+        'INSERT INTO mensagens (sender, recipient, message, created_at) VALUES (?, ?, ?, ?)',
+        [sender, recipient, message, createdAt]
+      );
+
+      // Envia para o remetente (para exibir imediatamente)
+      socket.emit('private-message', { sender, message, createdAt });
+
+      // Envia para o destinatário, se estiver online
+      const recipientSocketId = connectedUsers.get(recipient);
+      if (recipientSocketId) {
+        io.to(recipientSocketId).emit('private-message', { sender, message, createdAt });
+      } else {
+        console.log(`📭 Usuário ${recipient} está offline`);
+      }
+
+    } catch (error) {
+      console.error('❌ Erro ao salvar/enviar mensagem:', error);
+    }
+  });
+
+  // Carrega histórico de conversa entre dois usuários
+  socket.on('load-history', async (recipient) => {
+    const sender = socket.userEmail;
+    if (!sender || !recipient) return;
+
+    try {
+      const [rows] = await db.query(
+        `SELECT sender, recipient, message, created_at AS createdAt
+         FROM mensagens
+         WHERE (sender = ? AND recipient = ?) OR (sender = ? AND recipient = ?)
+         ORDER BY created_at ASC`,
+        [sender, recipient, recipient, sender]
+      );
+
+      socket.emit('history', rows);
+    } catch (err) {
+      console.error('❌ Erro ao carregar histórico:', err);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    if (socket.userEmail) connectedUsers.delete(socket.userEmail);
+    console.log('❌ Socket desconectado:', socket.id);
+  });
 });
-// Fazer com que o admin consiga adicionar os cargos
-
 
 
 

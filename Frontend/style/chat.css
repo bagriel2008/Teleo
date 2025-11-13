@@ -146,12 +146,12 @@ body {
 
 .message.sent {
   align-self: flex-end;
-  background-color: #dcf8c6;
+  background-color: #9696ff;
 }
 
 .message.received {
   align-self: flex-start;
-  background-color: #fff;
+  background-color: #b7b3b3;
 }
 
 /* === INPUT === */
